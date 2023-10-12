@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">KotlinFlashcards</string>
+    <string name="title">Flashy</string>
+    <string name="start">Start</string>
+    <string name="run">Run</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="load">Load</string>
+    <string name="done">Done</string>
+    <string name="accept">Accept Flashcard</string>
+    <string name="delete">Delete Flashcard</string>
+    <string name="manage">Flashcard Control</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="editHeader">Edit Flashcards</string>
+    <string name="hintQuestion">Enter Hint or Question</string>
+    <string name="answer">Enter Correct Answer</string>
+    <string name="runHeader">Run Flashcards</string>
+    <string name="check">Check Answer</string>
+    <string name="question">Show Question</string>
+    <string name="questionPlaceHolder">Question Will Go Here</string>
+    <string name="quit">Quit</string>
 </resources>
