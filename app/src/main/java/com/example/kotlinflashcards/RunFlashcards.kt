@@ -7,7 +7,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-
 class RunFlashcards : AppCompatActivity() {
 
     //set variables for screen ops
@@ -46,12 +45,19 @@ class RunFlashcards : AppCompatActivity() {
         btnCheck = findViewById(R.id.btn_Check)
         btnCheck.setOnClickListener {
 
-            //get rid of soft keyboard
-            val view = this.currentFocus
-            if (view != null) {
-                val inputManager = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                inputManager.hideSoftInputFromWindow(
-                    view.windowToken,
+            //temporarily hide soft keyboard
+            //set focus variable
+            val focus = this.currentFocus
+
+            //if focus is valid, get rid of soft keyboard
+            if (focus != null) {
+
+                //get instance of soft keyboard
+                val keyboard = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+
+                //temporarily hide keyboard
+                keyboard.hideSoftInputFromWindow(
+                    focus.windowToken,
                     InputMethodManager.HIDE_NOT_ALWAYS
                 )
             }
@@ -71,15 +77,16 @@ class RunFlashcards : AppCompatActivity() {
                     Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show()
                 }
 
-                //inform user all the flashcards have been answered and end activity
+                //inform user all the flashcards have been answered
                 else {
 
-                    //inform user all flashcards have been answered
-                    Toast.makeText(this, "You answered all the Flashcards!",
-                        Toast.LENGTH_SHORT).show()
+                    //clear question and answer text boxes
+                    textQuestion.text = getString(R.string.finished)
+                    textAnswer.text = getString(R.string.pressQuit)
 
-                    //end activity
-                    finish()
+                    //inform user all flashcards have been answered
+                    Toast.makeText(this, "You answered all the Flashcards correctly!",
+                        Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -94,10 +101,8 @@ class RunFlashcards : AppCompatActivity() {
         btnQuit = findViewById(R.id.btn_Quit)
         btnQuit.setOnClickListener {
 
-            //if quit is pressed, return to previous activity
+            //if quit is pressed, return to parent activity
             finish()
-
         }
-
     }
 }

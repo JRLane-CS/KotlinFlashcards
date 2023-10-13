@@ -19,5 +19,7 @@
     <string name="check">Check Answer</string>
     <string name="question">Show Question</string>
     <string name="questionPlaceHolder">Question Will Go Here</string>
+    <string name="finished">Flashcards successfully answered!</string>
+    <string name="pressQuit">Press the Quit button below.</string>
     <string name="quit">Quit</string>
 </resources>

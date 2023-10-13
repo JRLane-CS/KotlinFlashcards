@@ -1,5 +1,6 @@
 package com.example.kotlinflashcards
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
@@ -33,22 +34,8 @@ class EditFlashcards : AppCompatActivity() {
         textAnswer = findViewById(R.id.etml_EnterAnswer)
 
         //get flashcard arrays for questions and answers
-        //flashcardQuestions = intent.getStringArrayListExtra("questions")
-        //flashcardAnswers = intent.getStringArrayListExtra("answers")
-
-
-
-
-
-        //simulate new flashcard creation for data return
-        flashcardQuestions = arrayListOf("What number question is this?",
-                            "What number question is this?")
-        flashcardAnswers = arrayListOf("1", "2")
-
-
-
-
-
+        flashcardQuestions = intent.getStringArrayListExtra("questions")
+        flashcardAnswers = intent.getStringArrayListExtra("answers")
 
         //get size of arrays
         if (flashcardQuestions != null) {
@@ -63,14 +50,69 @@ class EditFlashcards : AppCompatActivity() {
         btnAccept = findViewById(R.id.btn_Accept)
         btnAccept.setOnClickListener {
 
-            //if index ? size, add flashcard to arrays, erase text in question and
-            //answer text boxes, increment index
+            //if either the question or answer edit text box is empty, show error toast
+            if (textQuestion.text.toString() == "" || textAnswer.text.toString() == "") {
+                Toast.makeText(
+                    this, "Both question and answer must exist!", Toast
+                        .LENGTH_SHORT
+                ).show()
+            } else {
 
-            //else replace flashcard data with input text data and advance index
+                //if index > size, add flashcard to arrays, erase text in question and
+                //answer text boxes, increment index
+                if (index > size) {
 
-            //show toast with flashcard added message
-            clearSoftKeyboard()
-            Toast.makeText(this, "Flashcard Added", Toast.LENGTH_SHORT).show()
+                    //add question and answer to arrays
+                    flashcardQuestions?.add(textQuestion.text.toString())
+                    flashcardAnswers?.add(textAnswer.text.toString())
+
+                    //increment index and size
+                    index += 1
+                    size += 1
+
+                    //clear question and answer edit text boxes
+                    textQuestion.text = ""
+                    textAnswer.text = ""
+                }
+
+                //else delete current question and answer from arrays, add new question and
+                //answer to arrays in current place, advance index, check against size, and
+                //either show the next question and answer or clear text edit boxes
+                else {
+
+                    //remove old question and answer
+                    flashcardQuestions!!.removeAt(index)
+                    flashcardAnswers!!.removeAt(index)
+
+                    //add new question and answer
+                    flashcardQuestions?.add(index, textQuestion.text.toString())
+                    flashcardAnswers?.add(index, textAnswer.text.toString())
+
+                    //increment index
+                    index += 1
+
+                    //if index is within the array bounds, populate text edit boxes with
+                    //current question and answer
+                    if (index <= size) {
+
+                        //populate text edit boxes with current question and answer
+                        textQuestion.text = flashcardQuestions!![index]
+                        textAnswer.text = flashcardAnswers!![index]
+                    }
+
+                    //else clear text edit boxes in preparation for new flashcard
+                    else {
+
+                        //clear question and answer edit text boxes
+                        textQuestion.text = ""
+                        textAnswer.text = ""
+                    }
+                }
+
+                //show toast with flashcard added message
+                clearSoftKeyboard()
+                Toast.makeText(this, "Flashcard Added", Toast.LENGTH_SHORT).show()
+            }
         }
 
         //when next button is pressed, advance index and show data if available, if not
@@ -79,12 +121,27 @@ class EditFlashcards : AppCompatActivity() {
         btnNext.setOnClickListener {
 
             //if index < size, increment index and show array data in the text boxes
+            if (index < size) {
+                index += 1
+
+                //populate text edit boxes with current question and answer
+                textQuestion.text = flashcardQuestions!![index]
+                textAnswer.text = flashcardAnswers!![index]
+            }
 
             //else clear text boxes, increment index, and wait for user input, show toast
             //with no more flashcard message
-            Toast.makeText(this, "There are no more flashcards!",
-                Toast.LENGTH_SHORT).show()
+            else {
+                if (index == size)
+                    index += 1
 
+                //clear question and answer edit text boxes
+                textQuestion.text = ""
+                textAnswer.text = ""
+
+                Toast.makeText(this, "There are no more flashcards!",
+                    Toast.LENGTH_SHORT).show()
+            }
             //clear soft keyboard
             clearSoftKeyboard()
         }
@@ -94,11 +151,20 @@ class EditFlashcards : AppCompatActivity() {
         btnPrevious = findViewById(R.id.btn_Previous)
         btnPrevious.setOnClickListener {
 
-            //if index > 0, decrement index and show array data in the text boxes
+            //if index < size, decrement index and show array data in the text boxes
+            if (index > 0) {
+                index -= 1
 
-            //else show toast with no more flashcards message
-            Toast.makeText(this, "There are no more flashcards!",
-                Toast.LENGTH_SHORT).show()
+                //populate text edit boxes with current question and answer
+                textQuestion.text = flashcardQuestions!![index]
+                textAnswer.text = flashcardAnswers!![index]
+            }
+
+            //else show toast with no more flashcard message
+            else {
+                Toast.makeText(this, "There are no more flashcards!",
+                    Toast.LENGTH_SHORT).show()
+            }
 
             //clear soft keyboard
             clearSoftKeyboard()
@@ -108,35 +174,103 @@ class EditFlashcards : AppCompatActivity() {
         btnDelete = findViewById(R.id.btn_Delete)
         btnDelete.setOnClickListener {
 
-            //remove flashcard data from arrays
 
-            //adjust index, if > size clear text boxes
+            if (size != -1 && index <= size) {
 
-            //clear soft keyboard, show toast with flashcard deleted message
+                //remove flashcard data from arrays
+                flashcardQuestions!!.removeAt(index)
+                flashcardAnswers!!.removeAt(index)
+
+                //decrement size and index as appropriate
+                size -= 1
+                if (index > 0)
+                    index -= 1
+
+                //if there are more flashcards in the array, show it and show toast of flashcard
+                //deleted
+                if (size > -1) {
+
+                    //populate text edit boxes with current question and answer
+                    textQuestion.text = flashcardQuestions!![index]
+                    textAnswer.text = flashcardAnswers!![index]
+
+                    //show toast of flashcard deleted
+                    Toast.makeText(this, "Flashcard Deleted", Toast.LENGTH_SHORT).show()
+                }
+
+                //last flashcard was deleted, so clear the text boxes and set index to zero
+                else {
+                    //clear question and answer edit text boxes
+                    textQuestion.text = ""
+                    textAnswer.text = ""
+
+                    //set index to zero
+                    index = 0
+
+                    //show toast of no more flashcards
+                    Toast.makeText(this, "No More Flashcards", Toast
+                        .LENGTH_SHORT).show()
+                }
+            }
+
+            //no flashcard to delete so clear text boxes and show toast
+            else {
+
+                //clear question and answer edit text boxes
+                textQuestion.text = ""
+                textAnswer.text = ""
+
+                //show no flashcard to delete toast
+                Toast.makeText(
+                    this, "No Flashcard to Delete.", Toast.LENGTH_SHORT).show()
+            }
+
+            //clear soft keyboard
             clearSoftKeyboard()
-            Toast.makeText(this, "Flashcard Deleted", Toast.LENGTH_SHORT).show()
         }
 
         //when quit button is pressed, end activity
         btnDone = findViewById(R.id.btn_Done)
         btnDone.setOnClickListener {
 
-            //if quit is pressed, return to previous activity with new arrays if not null
+            //cast mutable lists to array lists for data return
+            val questions = flashcardQuestions as ArrayList<String>
+            val answers = flashcardAnswers as ArrayList<String>
 
-            //else clear soft keyboard, show toast with flashcard deleted message
-            clearSoftKeyboard()
-            Toast.makeText(this, "You have no flashcards!", Toast.LENGTH_SHORT).show()
+            //if arrays are not null and same size return to previous activity with new arrays
+            if (questions.size > 0 && answers.size > 0 && questions.size == answers.size) {
+                setResult(
+                    RESULT_OK, Intent()
+                        .putStringArrayListExtra("questions", questions)
+                        .putStringArrayListExtra("answers", answers))
+                finish()
+            }
+
+            //else clear soft keyboard, show toast with no flashcards message
+            else {
+                clearSoftKeyboard()
+                Toast.makeText(
+                    this, "You have no flashcards to pass back!",
+                    Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    fun clearSoftKeyboard() {
+    //temporarily hide soft keyboard
+    private fun clearSoftKeyboard() {
 
-        //get rid of soft keyboard
-        val view = this.currentFocus
-        if (view != null) {
-            val inputManager = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.hideSoftInputFromWindow(
-                view.windowToken,
+        //set focus variable
+        val focus = this.currentFocus
+
+        //if focus not null, get rid of soft keyboard
+        if (focus != null) {
+
+            //get current instance of soft keyboard
+            val keyboard = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+
+            //temporarily hide keyboard
+            keyboard.hideSoftInputFromWindow(
+                focus.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
         }
