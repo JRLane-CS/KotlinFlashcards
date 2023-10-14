@@ -30,9 +30,14 @@ The language used to create this application was Kotlin.
 
 # Useful Websites
 
-{Make a list of websites that you found helpful in this project}
-* [Web Site Name](http://url.link.goes.here)
-* [Web Site Name](http://url.link.goes.here)
+* [Kotlin Language official website](https://kotlinlang.org/)
+* [Android - Kotlin Basics Courses](https://developer.android.com/courses/android-basics-kotlin/course)
+* [Result Launcher Tutorial for child to parent data](https://www.youtube.com/watch?v=mRhbGbTXJgo)
+* [Result Android documentation](https://developer.android.com/training/basics/intents/result)
+* [Building Android Intents](https://developer.android.com/guide/components/intents-filters#Building)
+* [Kotlin String Splitting](https://www.youtube.com/watch?v=sG-DN1u1vcQ)
+* [Shared Preference File Operations](https://www.geeksforgeeks.org/android-save-arraylist-to-sharedpreferences-with-kotlin/)
+
 
 # Future Work
 
