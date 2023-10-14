@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         btnStart = findViewById(R.id.btn_Start)
         btnStart.setOnClickListener {
             startActivity(Intent(this, ManageFlashcards::class.java))
+            finish()
         }
 
     }

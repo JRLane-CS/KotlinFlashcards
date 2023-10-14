@@ -1,8 +1,10 @@
 package com.example.kotlinflashcards
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -15,6 +17,7 @@ class ManageFlashcards : AppCompatActivity() {
     private lateinit var btnEdit : Button
     private lateinit var btnLoad : Button
     private lateinit var btnSave : Button
+    private lateinit var btnQuit : Button
 
     //declare result launcher variable for child activity data return
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
@@ -68,14 +71,80 @@ class ManageFlashcards : AppCompatActivity() {
         btnLoad = findViewById(R.id.btn_Load)
         btnLoad.setOnClickListener {
 
-            Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_SHORT).show()
+            //declare variable for loading combined questions and answers from shared prefs
+            val loadArrayList : ArrayList<String> = loadArray("flashcards")
+
+            //clear both questions and answers arrays of data
+            questions = arrayListOf()
+            answers = arrayListOf()
+
+            //loop through the loadArrayList, split each string,
+            //and put questions and answers in the correct array
+            for (i: Int in 0 until loadArrayList.size) {
+                val tempArray = loadArrayList[i].split("|||")
+                questions.add(tempArray[0])
+                answers.add((tempArray[1]))
+            }
+
+            //show user toast of flashcards loaded
+            Toast.makeText(this, "Flashcards Loaded", Toast.LENGTH_SHORT).show()
         }
 
         //save current flashcard set
         btnSave = findViewById(R.id.btn_Save)
         btnSave.setOnClickListener {
 
-            Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_SHORT).show()
+            //declare variable for combined questions and answers array
+            var saveArrayList : ArrayList<String> = arrayListOf()
+
+            //loop through all questions and answers, combine them into a single array
+            for (i: Int in 0 until questions.size) {
+                saveArrayList.add(questions[i] + "|||" + answers[i])
+            }
+
+            //save the saveArrayList
+            saveArray("flashcards", saveArrayList)
+
+            //show flashcards saved toast
+            Toast.makeText(this, "Flashcards Saved", Toast.LENGTH_SHORT).show()
+        }
+
+        btnQuit = findViewById(R.id.btn_Quit2)
+        btnQuit.setOnClickListener {
+            finish()
         }
     }
+    private fun saveArray(name: String, arrayList: ArrayList<String>) {
+        //turn array into set
+        val arraySet = arrayList.toSet()
+
+        //create shared pref instance
+        val sharedPreferences = getSharedPreferences(name, Context.MODE_PRIVATE)
+
+        //create editor instance
+        val editor = sharedPreferences.edit()
+
+        //load set into editor and write into memory
+        editor.putStringSet(name, arraySet)
+        editor.apply()
+    }
+
+    private fun loadArray(name: String): ArrayList<String> {
+        //create shared preference instance
+        val sharedPreferences = getSharedPreferences(name, Context.MODE_PRIVATE)
+
+        //load set from shared preferences memory
+        val arraySet = sharedPreferences.getStringSet(name, emptySet())
+
+        //create array list from retrieved set
+        val loadedArrayList = arrayListOf<String>()
+        loadedArrayList.addAll(arraySet!!)
+
+        //return the loaded array list
+        return loadedArrayList
+    }
+
 }
+
+
+
