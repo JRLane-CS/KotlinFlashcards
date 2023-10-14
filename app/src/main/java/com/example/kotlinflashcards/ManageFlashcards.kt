@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import java.lang.Exception
 
 class ManageFlashcards : AppCompatActivity() {
 
@@ -71,23 +71,40 @@ class ManageFlashcards : AppCompatActivity() {
         btnLoad = findViewById(R.id.btn_Load)
         btnLoad.setOnClickListener {
 
-            //declare variable for loading combined questions and answers from shared prefs
-            val loadArrayList : ArrayList<String> = loadArray("flashcards")
+            //in case of load error
+            try {
 
-            //clear both questions and answers arrays of data
-            questions = arrayListOf()
-            answers = arrayListOf()
+                //declare variable for loading combined questions and answers from shared prefs
+                val loadArrayList: ArrayList<String> = loadArray()
 
-            //loop through the loadArrayList, split each string,
-            //and put questions and answers in the correct array
-            for (i: Int in 0 until loadArrayList.size) {
-                val tempArray = loadArrayList[i].split("|||")
-                questions.add(tempArray[0])
-                answers.add((tempArray[1]))
+                if (loadArrayList.size == 0) {
+                    Toast.makeText(this, "No Saved Flashcards Loaded", Toast
+                        .LENGTH_SHORT).show()
+                }
+                else {
+
+                    //clear both questions and answers arrays of data
+                    questions = arrayListOf()
+                    answers = arrayListOf()
+
+                    //loop through the loadArrayList, split each string,
+                    //and put questions and answers in the correct array
+                    for (i: Int in 0 until loadArrayList.size) {
+                        val tempArray = loadArrayList[i].split("|||")
+                        questions.add(tempArray[0])
+                        answers.add((tempArray[1]))
+                    }
+
+                    //show user toast of flashcards loaded
+                    Toast.makeText(this, "Flashcards Loaded", Toast.LENGTH_SHORT).show()
+                }
             }
 
-            //show user toast of flashcards loaded
-            Toast.makeText(this, "Flashcards Loaded", Toast.LENGTH_SHORT).show()
+            //alert user to error
+            catch (e: Exception) {
+                Toast.makeText(this, "Exception: No Saved Flashcards Loaded", Toast
+                    .LENGTH_SHORT).show()
+            }
         }
 
         //save current flashcard set
@@ -95,7 +112,7 @@ class ManageFlashcards : AppCompatActivity() {
         btnSave.setOnClickListener {
 
             //declare variable for combined questions and answers array
-            var saveArrayList : ArrayList<String> = arrayListOf()
+            val saveArrayList : ArrayList<String> = arrayListOf()
 
             //loop through all questions and answers, combine them into a single array
             for (i: Int in 0 until questions.size) {
@@ -103,7 +120,7 @@ class ManageFlashcards : AppCompatActivity() {
             }
 
             //save the saveArrayList
-            saveArray("flashcards", saveArrayList)
+            saveArray(saveArrayList)
 
             //show flashcards saved toast
             Toast.makeText(this, "Flashcards Saved", Toast.LENGTH_SHORT).show()
@@ -114,27 +131,27 @@ class ManageFlashcards : AppCompatActivity() {
             finish()
         }
     }
-    private fun saveArray(name: String, arrayList: ArrayList<String>) {
+    private fun saveArray(arrayList: ArrayList<String>) {
         //turn array into set
         val arraySet = arrayList.toSet()
 
         //create shared pref instance
-        val sharedPreferences = getSharedPreferences(name, Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("flashcards", Context.MODE_PRIVATE)
 
         //create editor instance
         val editor = sharedPreferences.edit()
 
         //load set into editor and write into memory
-        editor.putStringSet(name, arraySet)
+        editor.putStringSet("flashcards", arraySet)
         editor.apply()
     }
 
-    private fun loadArray(name: String): ArrayList<String> {
+    private fun loadArray(): ArrayList<String> {
         //create shared preference instance
-        val sharedPreferences = getSharedPreferences(name, Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("flashcards", Context.MODE_PRIVATE)
 
         //load set from shared preferences memory
-        val arraySet = sharedPreferences.getStringSet(name, emptySet())
+        val arraySet = sharedPreferences.getStringSet("flashcards", emptySet())
 
         //create array list from retrieved set
         val loadedArrayList = arrayListOf<String>()
